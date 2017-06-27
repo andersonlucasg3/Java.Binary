@@ -1,5 +1,7 @@
 package br.com.insanitech.javabinary;
 
+import br.com.insanitech.javabinary.exceptions.TypeNotSupportedException;
+
 public enum DataType implements IShort {
     OBJECT(0),
     INT8(1),
@@ -80,28 +82,28 @@ public enum DataType implements IShort {
         return false;
     }
 
-//    public Decodable getIvarInstance() throws TypeNotSupportedException {
-//        switch (this) {
-//            case OBJECT: return new IvarObject();
-//            case INT8: return new IvarToken<Byte>();
-//            case INT16: return new IvarToken<Short>();
-//            case INT32: return new IvarToken<Integer>();
-//            case INT64: return new IvarToken<Long>();
-//            case FLOAT: return new IvarToken<Float>();
-//            case DOUBLE: return new IvarToken<Double>();
-//            case STRING: return new IvarToken<String>();
-//            case DATA: return new IvarToken<Byte[]>();
-//            // array types
-//            case ARRAY_OBJECT: return new IvarArray<IvarObject>();
-//            case ARRAY_INT8: return new IvarArray<Byte>();
-//            case ARRAY_INT16: return new IvarArray<Short>();
-//            case ARRAY_INT32: return new IvarArray<Integer>();
-//            case ARRAY_INT64: return new IvarArray<Long>();
-//            case ARRAY_FLOAT: return new IvarArray<Float>();
-//            case ARRAY_DOUBLE: return new IvarArray<Double>();
-//            case ARRAY_STRING: return new IvarArray<String>();
-//            case ARRAY_DATA: return new IvarArray<Byte[]>();
-//        }
-//        return null;
-//    }
+    public Decodable getIvarInstance() throws TypeNotSupportedException {
+        switch (this) {
+            case OBJECT: return new IvarObject();
+            case INT8: return new IvarToken<Byte>();
+            case INT16: return new IvarToken<Short>();
+            case INT32: return new IvarToken<Integer>();
+            case INT64: return new IvarToken<Long>();
+            case FLOAT: return new IvarToken<Float>();
+            case DOUBLE: return new IvarToken<Double>();
+            case STRING: return new IvarToken<String>();
+            case DATA: return new IvarToken<Byte[]>();
+            // array types
+            case ARRAY_OBJECT: return new IvarArray<IvarObject>();
+            case ARRAY_INT8: return new IvarArray<Byte>();
+            case ARRAY_INT16: return new IvarArray<Short>();
+            case ARRAY_INT32: return new IvarArray<Integer>();
+            case ARRAY_INT64: return new IvarArray<Long>();
+            case ARRAY_FLOAT: return new IvarArray<Float>();
+            case ARRAY_DOUBLE: return new IvarArray<Double>();
+            case ARRAY_STRING: return new IvarArray<String>();
+            case ARRAY_DATA: return new IvarArray<Byte[]>();
+        }
+        return null;
+    }
 }
