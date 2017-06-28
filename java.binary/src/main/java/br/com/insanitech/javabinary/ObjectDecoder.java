@@ -2,6 +2,7 @@ package br.com.insanitech.javabinary;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,9 +84,11 @@ public class ObjectDecoder {
         return field.getType();
     }
 
-    private Class<?> findArrayType(String fieldName, Object instance) throws NoSuchFieldException {
-        Class<?> arrayType = this.findObjectType(fieldName, instance);
-        return arrayType.getComponentType();
+    private Class<?> findArrayType(String fieldName, Object instance) throws NoSuchFieldException, IllegalAccessException, InstantiationException {
+        Class<?> instanceClass = instance.getClass();
+        Field field = instanceClass.getDeclaredField(fieldName);
+        ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+        return (Class<?>) genericType.getActualTypeArguments()[0];
     }
 
     @SuppressWarnings("unchecked")
@@ -117,6 +120,9 @@ public class ObjectDecoder {
         if (type == IvarObject.class) {
             List<Object> array = new ArrayList<>();
             Class<?> itemType = this.findArrayType(values.getName(), instance);
+            if (itemType == null) {
+                throw new TypeNotSupportedException(this.findObjectType(values.getName(), instance));
+            }
             for (T value : values.getValue()) {
                 Object itemInstance = itemType.newInstance();
                 this.populateFields(itemInstance, (IvarObject) value);

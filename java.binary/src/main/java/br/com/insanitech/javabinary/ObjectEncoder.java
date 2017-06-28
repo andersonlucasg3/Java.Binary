@@ -50,12 +50,13 @@ public class ObjectEncoder {
         return this.getAnyType(field.get(object), field.getName());
     }
 
+    @SuppressWarnings("unchecked")
     private <T> Token getAnyType(T value, String key) throws IOException, IllegalAccessException {
         Token token = this.getToken(value, key);
         if (token != null) {
             return token;
         } else {
-            if (value.getClass() == ArrayList.class) {
+            if (value.getClass().getName().contains("List")) {
                 return this.getArray((List<Object>)value, key);
             } else {
                 return this.encodeObject(value, key);
