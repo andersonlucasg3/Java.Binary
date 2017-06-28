@@ -1,7 +1,7 @@
 package br.com.insanitech.javabinary.storage;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -15,16 +15,14 @@ import br.com.insanitech.javabinary.exceptions.DataInputReadException;
 
 public class DataReader extends Data {
     private int position = 0;
-    private ByteArrayInputStream inputStream;
-    private DataInputStream dataInput;
+    private byte[] buffer;
 
-    public DataReader(ByteArrayInputStream data) {
-        this.inputStream = data;
-        this.dataInput = new DataInputStream(data);
+    public DataReader(@NonNull byte[] buffer) {
+        this.buffer = buffer;
     }
 
     public DataReader(DataWriter writer) {
-        this(new ByteArrayInputStream(writer.outputStream.toByteArray()));
+        this(writer.outputStream.toByteArray());
     }
 
     public int position() {
@@ -33,11 +31,11 @@ public class DataReader extends Data {
 
     @Override
     public int length() throws IOException {
-        return this.dataInput.available();
+        return this.buffer.length;
     }
 
     public Byte readByte() throws IOException {
-        Byte value = this.dataInput.readByte();
+        Byte value = this.buffer[this.position];
         this.position += 1;
         return value;
     }
@@ -48,9 +46,7 @@ public class DataReader extends Data {
 
         ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 2).order(ByteOrder.BIG_ENDIAN);
 
-        Short value = buffer.asShortBuffer().get();
-        this.position += 2;
-        return value;
+        return buffer.asShortBuffer().get();
     }
 
     public Integer readInt() throws IOException {
@@ -59,9 +55,7 @@ public class DataReader extends Data {
 
         ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 4).order(ByteOrder.BIG_ENDIAN);
 
-        Integer value = buffer.asIntBuffer().get();
-        this.position += 4;
-        return value;
+        return buffer.asIntBuffer().get();
     }
 
     public Long readLong() throws IOException {
@@ -70,9 +64,7 @@ public class DataReader extends Data {
 
         ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 8).order(ByteOrder.BIG_ENDIAN);
 
-        Long value = buffer.asLongBuffer().get();
-        this.position += 8;
-        return value;
+        return buffer.asLongBuffer().get();
     }
 
     public Float readFloat() throws IOException {
@@ -81,9 +73,7 @@ public class DataReader extends Data {
 
         ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 4).order(ByteOrder.BIG_ENDIAN);
 
-        Float value = buffer.asFloatBuffer().get();
-        this.position += 4;
-        return value;
+        return buffer.asFloatBuffer().get();
     }
 
     public Double readDouble() throws IOException {
@@ -92,13 +82,15 @@ public class DataReader extends Data {
 
         ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 8).order(ByteOrder.BIG_ENDIAN);
 
-        Double value = buffer.asDoubleBuffer().get();
-        this.position += 8;
-        return value;
+        return buffer.asDoubleBuffer().get();
     }
 
     public void readBytes(byte[] buffer, int length) throws IOException {
-        int read = this.dataInput.read(buffer, 0, length);
+        int available = this.buffer.length - this.position;
+        int read = length <= available ? length : available;
+
+        System.arraycopy(this.buffer, this.position, buffer, 0, read);
+
         this.position += read;
         if (read != length) {
             throw new DataInputReadException(length, read);
@@ -108,7 +100,7 @@ public class DataReader extends Data {
     public Data readData(int length) throws IOException {
         byte[] buffer = new byte[length];
         this.readBytes(buffer, length);
-        return new DataReader(new ByteArrayInputStream(buffer));
+        return new DataReader(buffer);
     }
 
     public String readString(int length) throws IOException {
@@ -118,8 +110,6 @@ public class DataReader extends Data {
     }
 
     public void seek(int position) throws IOException {
-        this.dataInput.reset();
-        this.dataInput.skip(position);
         this.position = position;
     }
 }

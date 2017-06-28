@@ -2,8 +2,8 @@ package br.com.insanitech.javabinary;
 
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import br.com.insanitech.javabinary.storage.DataReader;
 import br.com.insanitech.javabinary.storage.DataWriter;
@@ -15,12 +15,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
-    }
-
+public class DataReadWriteUnitTest {
     private void read(DataReader readable) throws Exception {
         int int1 = 1;
         int int2 = 2;
@@ -79,7 +74,7 @@ public class ExampleUnitTest {
 
         byte[] written = outputStream.toByteArray();
 
-        DataReader readable = new DataReader(new ByteArrayInputStream(written));
+        DataReader readable = new DataReader(written);
 
         this.read(readable);
 
@@ -89,5 +84,27 @@ public class ExampleUnitTest {
 
         readable = new DataReader(writable);
         this.read(readable);
+    }
+
+    @Test
+    public void testDataReaderSeek() throws IOException {
+        DataWriter writer = new DataWriter(new ByteArrayOutputStream());
+
+        writer.write(10);
+        writer.write(20);
+        writer.write(30);
+
+        DataReader reader = new DataReader(writer);
+
+        reader.seek(4 * 2);
+        int first = reader.readInt();
+        reader.seek(4);
+        int second = reader.readInt();
+        reader.seek(0);
+        int third = reader.readInt();
+
+        assertEquals(first, 30);
+        assertEquals(second, 20);
+        assertEquals(third, 10);
     }
 }

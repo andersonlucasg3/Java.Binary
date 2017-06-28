@@ -1,4 +1,4 @@
-package br.com.insanitech.javabinary;
+package br.com.insanitech.javabinary.tokenizing;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -33,7 +33,7 @@ public abstract class Token {
 
     // MARK: Encodable
 
-    public abstract ByteBuffer encode() throws IOException;
+    public abstract DataReader encode() throws IOException;
 
     public void writeString(String string, DataWriter inData) throws IOException {
         Integer length = string.length();
@@ -52,17 +52,17 @@ public abstract class Token {
     public <T extends Object> void writeOther(T other, DataWriter inData) throws IOException {
         Class<?> type = other.getClass();
         if (type == Byte.class) {
-            inData.write((Byte)other);
+            inData.write((Byte) other);
         } else if (type == Short.class) {
-            inData.write((Short)other);
+            inData.write((Short) other);
         } else if (type == Integer.class) {
-            inData.write((Integer)other);
+            inData.write((Integer) other);
         } else if (type == Long.class) {
-            inData.write((Long)other);
+            inData.write((Long) other);
         } else if (type == Float.class) {
-            inData.write((Float)other);
+            inData.write((Float) other);
         } else if (type == Double.class) {
-            inData.write((Double)other);
+            inData.write((Double) other);
         } else {
             throw new TypeNotSupportedException(type);
         }
@@ -70,20 +70,20 @@ public abstract class Token {
 
     // MARK: Decodable
 
-    public abstract void decode(ByteBuffer data) throws Exception;
+    public abstract void decode(ByteBuffer data) throws IOException;
 
-    public abstract void decode(DataReader bytes) throws Exception;
+    public abstract void decode(DataReader bytes) throws IOException;
 
     public String readString(DataReader bytes) throws IOException {
         Integer length = this.readOther(Integer.class, bytes);
         return bytes.readString(length);
     }
 
-    public ByteBuffer readData(DataReader bytes) throws IOException {
+    public DataReader readData(DataReader bytes) throws IOException {
         Integer length = this.readOther(Integer.class, bytes);
         byte[] buffer = new byte[length];
         bytes.readBytes(buffer, length);
-        return ByteBuffer.wrap(buffer);
+        return new DataReader(buffer);
     }
 
     public <T extends Object> T readOther(Class<T> type, DataReader bytes) throws IOException {
@@ -93,30 +93,29 @@ public abstract class Token {
     @SuppressWarnings("unchecked")
     public <T extends Object> T readOther(Class<T> type, DataReader bytes, boolean advance) throws IOException {
         // need to do lots o code here because java does not support type casting like swift
-        int position = bytes.position();
         if (type == Byte.class) {
             T value = (T) bytes.readByte();
-            if (!advance) bytes.seek(position-1);
+            if (!advance) bytes.seek(bytes.position() - 1);
             return value;
         } else if (type == Short.class) {
             T value = (T) bytes.readShort();
-            if (!advance) bytes.seek(position-2);
+            if (!advance) bytes.seek(bytes.position() - 2);
             return value;
         } else if (type == Integer.class) {
             T value = (T) bytes.readInt();
-            if (!advance) bytes.seek(position-4);
+            if (!advance) bytes.seek(bytes.position() - 4);
             return value;
         } else if (type == Long.class) {
             T value = (T) bytes.readLong();
-            if (!advance) bytes.seek(position-8);
+            if (!advance) bytes.seek(bytes.position() - 8);
             return value;
         } else if (type == Float.class) {
             T value = (T) bytes.readFloat();
-            if (!advance) bytes.seek(position-4);
+            if (!advance) bytes.seek(bytes.position() - 4);
             return value;
         } else if (type == Double.class) {
             T value = (T) bytes.readDouble();
-            if (!advance) bytes.seek(position-8);
+            if (!advance) bytes.seek(bytes.position() - 8);
             return value;
         }
         return null;
