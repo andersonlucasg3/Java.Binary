@@ -2,7 +2,6 @@ package br.com.insanitech.javabinary.storage;
 
 import android.support.annotation.NonNull;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -30,17 +29,18 @@ public class DataReader extends Data {
     }
 
     @Override
-    public int length() throws IOException {
+    public int length() {
         return this.buffer.length;
     }
 
-    public Byte readByte() throws IOException {
-        Byte value = this.buffer[this.position];
-        this.position += 1;
-        return value;
+    public Byte readByte() throws DataInputReadException {
+        byte[] bytes = new byte[1];
+        this.readBytes(bytes, 1);
+
+        return bytes[0];
     }
 
-    public Short readShort() throws IOException {
+    public Short readShort() throws DataInputReadException {
         byte[] bytes = new byte[2];
         this.readBytes(bytes, 2);
 
@@ -49,7 +49,7 @@ public class DataReader extends Data {
         return buffer.asShortBuffer().get();
     }
 
-    public Integer readInt() throws IOException {
+    public Integer readInt() throws DataInputReadException {
         byte[] bytes = new byte[4];
         this.readBytes(bytes, 4);
 
@@ -58,7 +58,7 @@ public class DataReader extends Data {
         return buffer.asIntBuffer().get();
     }
 
-    public Long readLong() throws IOException {
+    public Long readLong() throws DataInputReadException {
         byte[] bytes = new byte[8];
         this.readBytes(bytes, 8);
 
@@ -67,7 +67,7 @@ public class DataReader extends Data {
         return buffer.asLongBuffer().get();
     }
 
-    public Float readFloat() throws IOException {
+    public Float readFloat() throws DataInputReadException {
         byte[] bytes = new byte[4];
         this.readBytes(bytes, 4);
 
@@ -76,7 +76,7 @@ public class DataReader extends Data {
         return buffer.asFloatBuffer().get();
     }
 
-    public Double readDouble() throws IOException {
+    public Double readDouble() throws DataInputReadException {
         byte[] bytes = new byte[8];
         this.readBytes(bytes, 8);
 
@@ -85,7 +85,7 @@ public class DataReader extends Data {
         return buffer.asDoubleBuffer().get();
     }
 
-    public void readBytes(byte[] buffer, int length) throws IOException {
+    public void readBytes(byte[] buffer, int length) throws DataInputReadException {
         int available = this.buffer.length - this.position;
         int read = length <= available ? length : available;
 
@@ -97,19 +97,19 @@ public class DataReader extends Data {
         }
     }
 
-    public Data readData(int length) throws IOException {
+    public Data readData(int length) throws DataInputReadException {
         byte[] buffer = new byte[length];
         this.readBytes(buffer, length);
         return new DataReader(buffer);
     }
 
-    public String readString(int length) throws IOException {
+    public String readString(int length) throws DataInputReadException {
         byte[] buffer = new byte[length];
         this.readBytes(buffer, length);
         return new String(buffer, Charset.forName("UTF-8"));
     }
 
-    public void seek(int position) throws IOException {
+    public void seek(int position) {
         this.position = position;
     }
 }
