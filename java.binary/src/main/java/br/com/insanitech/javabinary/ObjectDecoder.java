@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import br.com.insanitech.javabinary.exceptions.TypeNotSupportedException;
@@ -77,16 +78,37 @@ public class ObjectDecoder {
         return typeInstance;
     }
 
+    private List<Field> getAllFieldsFromClass(Class<?> classType) {
+        List<Field> fields = new ArrayList<>();
+        while (classType != null) {
+            fields.addAll(Arrays.asList(classType.getDeclaredFields()));
+
+            classType = classType.getSuperclass();
+        }
+        return fields;
+    }
+
+    private Field findField(String fieldName, List<Field> fields) {
+        for (Field field : fields) {
+            if (field.getName().equals(fieldName)) {
+                return field;
+            }
+        }
+        return null;
+    }
+
     private Class<?> findObjectType(String fieldName, Object instance) throws NoSuchFieldException {
         Class<?> instanceClass = instance.getClass();
-        Field field = instanceClass.getDeclaredField(fieldName);
+        Field field = this.findField(fieldName, this.getAllFieldsFromClass(instanceClass));
+        assert field != null;
         field.setAccessible(true);
         return field.getType();
     }
 
     private Class<?> findArrayType(String fieldName, Object instance) throws NoSuchFieldException, IllegalAccessException, InstantiationException {
         Class<?> instanceClass = instance.getClass();
-        Field field = instanceClass.getDeclaredField(fieldName);
+        Field field = this.findField(fieldName, this.getAllFieldsFromClass(instanceClass));
+        assert field != null;
         ParameterizedType genericType = (ParameterizedType) field.getGenericType();
         return (Class<?>) genericType.getActualTypeArguments()[0];
     }
