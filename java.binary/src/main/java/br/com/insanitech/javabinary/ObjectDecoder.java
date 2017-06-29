@@ -210,7 +210,8 @@ public class ObjectDecoder {
 
     private <T> void setIvarValue(Object instance, String fieldName, T value) throws NoSuchFieldException, IllegalAccessException {
         Class<?> instanceClass = instance.getClass();
-        Field field = instanceClass.getDeclaredField(fieldName);
+        Field field = this.findField(fieldName, this.getAllFieldsFromClass(instanceClass));
+        assert field != null;
         field.setAccessible(true);
         field.set(instance, value);
     }
