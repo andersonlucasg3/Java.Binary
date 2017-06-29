@@ -33,7 +33,10 @@ public class ObjectEncoder {
 
             for (Field field : fields) {
                 field.setAccessible(true);
-                tokens.add(this.getType(field, object));
+                Token token = this.getType(field, object);
+                if (token != null) {
+                    tokens.add(token);
+                }
             }
 
             objectClass = objectClass.getSuperclass();
@@ -47,7 +50,11 @@ public class ObjectEncoder {
     }
 
     private Token getType(Field field, Object object) throws IOException, IllegalAccessException {
-        return this.getAnyType(field.get(object), field.getName());
+        Object value = field.get(object);
+        if (value != null) {
+            return this.getAnyType(value, field.getName());
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
