@@ -36,6 +36,8 @@ public class ObjectEncoder {
                 Token token = this.getType(field, object);
                 if (token != null) {
                     tokens.add(token);
+                } else {
+                    tokens.add(new IvarObject(field.getName(), new ArrayList<Token>()));
                 }
             }
 
