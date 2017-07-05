@@ -44,7 +44,7 @@ public class DataReader extends Data {
         byte[] bytes = new byte[2];
         this.readBytes(bytes, 2);
 
-        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 2).order(ByteOrder.BIG_ENDIAN);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 2).order(ByteOrder.LITTLE_ENDIAN);
 
         return buffer.asShortBuffer().get();
     }
@@ -53,7 +53,7 @@ public class DataReader extends Data {
         byte[] bytes = new byte[4];
         this.readBytes(bytes, 4);
 
-        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 4).order(ByteOrder.BIG_ENDIAN);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 4).order(ByteOrder.LITTLE_ENDIAN);
 
         return buffer.asIntBuffer().get();
     }
@@ -62,7 +62,7 @@ public class DataReader extends Data {
         byte[] bytes = new byte[8];
         this.readBytes(bytes, 8);
 
-        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 8).order(ByteOrder.BIG_ENDIAN);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 8).order(ByteOrder.LITTLE_ENDIAN);
 
         return buffer.asLongBuffer().get();
     }
@@ -71,7 +71,7 @@ public class DataReader extends Data {
         byte[] bytes = new byte[4];
         this.readBytes(bytes, 4);
 
-        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 4).order(ByteOrder.BIG_ENDIAN);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 4).order(ByteOrder.LITTLE_ENDIAN);
 
         return buffer.asFloatBuffer().get();
     }
@@ -80,7 +80,7 @@ public class DataReader extends Data {
         byte[] bytes = new byte[8];
         this.readBytes(bytes, 8);
 
-        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 8).order(ByteOrder.BIG_ENDIAN);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, 8).order(ByteOrder.LITTLE_ENDIAN);
 
         return buffer.asDoubleBuffer().get();
     }

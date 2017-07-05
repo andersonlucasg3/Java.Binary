@@ -30,36 +30,36 @@ public class DataWriter extends Data {
 
     public void write(short value) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.putShort(value);
         buffer = buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putShort(value);
         this.writeBytes(buffer.array(), 2);
     }
 
     public void write(int value) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putInt(value);
         buffer = buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putInt(value);
         this.writeBytes(buffer.array(), 4);
     }
 
     public void write(long value) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(8);
-        buffer.putLong(value);
         buffer = buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putLong(value);
         this.writeBytes(buffer.array(), 8);
     }
 
     public void write(float value) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putFloat(value);
         buffer = buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putFloat(value);
         this.writeBytes(buffer.array(), 4);
     }
 
     public void write(double value) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(8);
-        buffer.putDouble(value);
         buffer = buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putDouble(value);
         this.writeBytes(buffer.array(), 8);
     }
 
